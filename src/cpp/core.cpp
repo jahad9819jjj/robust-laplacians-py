@@ -32,6 +32,9 @@ double laplacianReplaceVal = 1.0;
 double massReplaceVal = -1e-3;
 
 
+/* メッシュからラプラシアン行列と質量行列を構築
+** mollifyFactorでラプラシアンの滑らかさを調整可能
+*/
 std::tuple<SparseMatrix<double>, SparseMatrix<double>>
 buildMeshLaplacian(const DenseMatrix<double>& vMat, const DenseMatrix<size_t>& fMat, double mollifyFactor) {
 
@@ -138,6 +141,11 @@ buildMeshLaplacian(const DenseMatrix<double>& vMat, const DenseMatrix<size_t>& f
   return std::make_tuple(L, M);
 }
 
+/* 点群からラプラシアン行列と質量行列を構築
+** 各点の近傍点を見つけて局所的な三角形分割を行い、メッシュのように扱うことでラプラシアンを計算
+** k:近傍点数, mollifyFactor:laplacianの滑らかさ
+** 異常値に頑健な手法(tufted laplacian)を用いている
+*/
 std::tuple<SparseMatrix<double>, SparseMatrix<double>> buildPointCloudLaplacian(const DenseMatrix<double>& vMat,
                                                                                 double mollifyFactor, size_t nNeigh) {
 
